@@ -6,30 +6,23 @@ aha 支持多个领域的最先进 AI 模型集合。
 
 | 模型 | 参数量 | 描述 | 使用场景 | 开源协议 |
 |------|--------|------|----------|---------|
-| **Qwen2.5-VL-3B** | 3B | 多模态大语言模型 | 对话、推理、视觉 | [Qwen 研究许可协议](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
-| **Qwen2.5-VL-7B** | 7B | 多模态大语言模型 | 对话、推理、视觉 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **Qwen3-0.6B** | 0.6B | 最新一代 | 高级推理 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **MiniCPM4-0.5B** | 0.5B | 高效轻量级 | 边缘部署 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 
 ## 视觉与多模态
 
-| 模型 | 参数量 | 描述 | 分辨率 | 开源协议 |
+| 模型 | 参数量 | 描述 | 开源协议 |
 |------|--------|------|--------|---------|
-| **Qwen2.5-VL-3B** | 3B | 图像理解 | 最高 1024x1024 | [Qwen 研究许可协议](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
-| **Qwen2.5-VL-7B** | 7B | 图像理解 | 最高 1024x1024 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-2B** | 2B | 增强多模态 | 最高 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-4B** | 4B | 增强多模态 | 最高 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-8B** | 8B | 增强多模态 | 最高 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-32B** | 32B | 增强多模态 | 最高 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-
-## 语音识别 (ASR)
-
-| 模型 | 参数量 | 语言 | 实时 | 速度 | 开源协议 |
-|------|--------|------|------|------|---------|
-| **Fun-ASR-Nano-2512** | 2512M | 中/英 | 是 | 16x 实时 | 未标明 |
-| **GLM-ASR-Nano-2512** | 2512M | 中/英 | 是 | 32x 实时 | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
-| **Qwen3-ASR-0.6B** | 0.6B | 中/英 | 是 | 快速 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-ASR-1.7B** | 1.7B | 中/英 | 是 | 快速 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen2.5-VL-3B** | 3B | 图像理解 | [Qwen 研究许可协议](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
+| **Qwen2.5-VL-7B** | 7B | 图像理解 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-2B** | 2B | 增强多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-4B** | 4B | 增强多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-8B** | 8B | 增强多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-32B** | 32B | 增强多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-0.8B** | 0.8B | 原生多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-2B** | 2B | 原生多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-4B** | 4B | 原生多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-9B** | 9B | 原生多模态 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 
 ## OCR
 
@@ -38,6 +31,16 @@ aha 支持多个领域的最先进 AI 模型集合。
 | **PaddleOCR-VL** | 80+ | 轻量级 | 通用文档 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **Hunyuan-OCR** | 中文 | 深度学习 | 复杂布局 | [腾讯混元社区许可协议](https://huggingface.co/tencent/HunyuanOCR/blob/main/LICENSE) |
 | **DeepSeek-OCR** | 多语言 | 场景文字 | 自然图像 | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
+
+## 语音识别 (ASR)
+
+| 模型 | 参数量 | 语言 | 实时 | 速度 | 开源协议 |
+|------|--------|------|------|------|---------|
+| **Fun-ASR-Nano-2512** | 2512M | 中/英 | 是 | 快速 | 未标明 |
+| **GLM-ASR-Nano-2512** | 2512M | 中/英 | 是 | 快速 | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
+| **Qwen3-ASR-0.6B** | 0.6B | 中/英 | 是 | 快速 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-ASR-1.7B** | 1.7B | 中/英 | 是 | 快速 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+
 
 ## 语音生成
 
@@ -77,7 +80,7 @@ aha 支持多个领域的最先进 AI 模型集合。
 
 ## 模型更新
 
-模型定期更新。查看 [releases](https://github.com/jhqxxx/aha/releases) 获取最新版本。
+模型不定期更新。
 
 ## 性能基准
 

@@ -11,6 +11,7 @@ pub mod minicpm4;
 pub mod paddleocr_vl;
 pub mod qwen2_5vl;
 pub mod qwen3;
+pub mod qwen3_5;
 pub mod qwen3_asr;
 pub mod qwen3vl;
 pub mod rmbg2_0;
@@ -29,9 +30,9 @@ use crate::models::{
     glm_asr_nano::generate::GlmAsrNanoGenerateModel,
     hunyuan_ocr::generate::HunyuanOCRGenerateModel, minicpm4::generate::MiniCPMGenerateModel,
     paddleocr_vl::generate::PaddleOCRVLGenerateModel, qwen2_5vl::generate::Qwen2_5VLGenerateModel,
-    qwen3::generate::Qwen3GenerateModel, qwen3_asr::generate::Qwen3AsrGenerateModel,
-    qwen3vl::generate::Qwen3VLGenerateModel, rmbg2_0::generate::RMBG2_0Model,
-    voxcpm::generate::VoxCPMGenerate,
+    qwen3::generate::Qwen3GenerateModel, qwen3_5::generate::Qwen3_5GenerateModel,
+    qwen3_asr::generate::Qwen3AsrGenerateModel, qwen3vl::generate::Qwen3VLGenerateModel,
+    rmbg2_0::generate::RMBG2_0Model, voxcpm::generate::VoxCPMGenerate,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, clap::ValueEnum)]
@@ -44,6 +45,14 @@ pub enum WhichModel {
     Qwen2_5vl7B,
     #[value(name = "qwen3-0.6b", hide = true)]
     Qwen3_0_6B,
+    #[value(name = "qwen3.5-0.8b", hide = true)]
+    Qwen3_5_0_8B,
+    #[value(name = "qwen3.5-2b", hide = true)]
+    Qwen3_5_2B,
+    #[value(name = "qwen3.5-4b", hide = true)]
+    Qwen3_5_4B,
+    #[value(name = "qwen3.5-9b", hide = true)]
+    Qwen3_5_9B,
     #[value(name = "qwen3asr-0.6b", hide = true)]
     Qwen3ASR0_6B,
     #[value(name = "qwen3asr-1.7b", hide = true)]
@@ -82,6 +91,10 @@ impl WhichModel {
             WhichModel::Qwen2_5vl3B => "Qwen/Qwen2.5-VL-3B-Instruct",
             WhichModel::Qwen2_5vl7B => "Qwen/Qwen2.5-VL-7B-Instruct",
             WhichModel::Qwen3_0_6B => "Qwen/Qwen3-0.6B",
+            WhichModel::Qwen3_5_0_8B => "Qwen/Qwen3.5-0.8B",
+            WhichModel::Qwen3_5_2B => "Qwen/Qwen3.5-2B",
+            WhichModel::Qwen3_5_4B => "Qwen/Qwen3.5-4B",
+            WhichModel::Qwen3_5_9B => "Qwen/Qwen3.5-9B",
             WhichModel::Qwen3ASR0_6B => "Qwen/Qwen3-ASR-0.6B",
             WhichModel::Qwen3ASR1_7B => "Qwen/Qwen3-ASR-1.7B",
             WhichModel::Qwen3vl2B => "Qwen/Qwen3-VL-2B-Instruct",
@@ -103,14 +116,17 @@ impl WhichModel {
     pub fn model_type(self) -> &'static str {
         match self {
             // LLM models
-            WhichModel::MiniCPM4_0_5B
-            | WhichModel::Qwen2_5vl3B
+            WhichModel::MiniCPM4_0_5B | WhichModel::Qwen3_0_6B => "llm",
+            WhichModel::Qwen2_5vl3B
             | WhichModel::Qwen2_5vl7B
-            | WhichModel::Qwen3_0_6B
             | WhichModel::Qwen3vl2B
             | WhichModel::Qwen3vl4B
             | WhichModel::Qwen3vl8B
-            | WhichModel::Qwen3vl32B => "llm",
+            | WhichModel::Qwen3vl32B
+            | WhichModel::Qwen3_5_0_8B
+            | WhichModel::Qwen3_5_2B
+            | WhichModel::Qwen3_5_4B
+            | WhichModel::Qwen3_5_9B => "vlm",
             // OCR models
             WhichModel::DeepSeekOCR | WhichModel::HunyuanOCR | WhichModel::PaddleOCRVL => "ocr",
             // ASR models
@@ -143,6 +159,7 @@ pub enum ModelInstance<'a> {
     MiniCPM4(MiniCPMGenerateModel<'a>),
     Qwen2_5VL(Qwen2_5VLGenerateModel<'a>),
     Qwen3(Qwen3GenerateModel<'a>),
+    Qwen3_5(Qwen3_5GenerateModel<'a>),
     Qwen3ASR(Qwen3AsrGenerateModel<'a>),
     Qwen3VL(Qwen3VLGenerateModel<'a>),
     DeepSeekOCR(DeepseekOCRGenerateModel),
@@ -160,6 +177,7 @@ impl<'a> GenerateModel for ModelInstance<'a> {
             ModelInstance::MiniCPM4(model) => model.generate(mes),
             ModelInstance::Qwen2_5VL(model) => model.generate(mes),
             ModelInstance::Qwen3(model) => model.generate(mes),
+            ModelInstance::Qwen3_5(model) => model.generate(mes),
             ModelInstance::Qwen3ASR(model) => model.generate(mes),
             ModelInstance::Qwen3VL(model) => model.generate(mes),
             ModelInstance::DeepSeekOCR(model) => model.generate(mes),
@@ -187,6 +205,7 @@ impl<'a> GenerateModel for ModelInstance<'a> {
             ModelInstance::MiniCPM4(model) => model.generate_stream(mes),
             ModelInstance::Qwen2_5VL(model) => model.generate_stream(mes),
             ModelInstance::Qwen3(model) => model.generate_stream(mes),
+            ModelInstance::Qwen3_5(model) => model.generate_stream(mes),
             ModelInstance::Qwen3VL(model) => model.generate_stream(mes),
             ModelInstance::Qwen3ASR(model) => model.generate_stream(mes),
             ModelInstance::DeepSeekOCR(model) => model.generate_stream(mes),
@@ -217,6 +236,22 @@ pub fn load_model(model_type: WhichModel, path: &str) -> Result<ModelInstance<'_
         WhichModel::Qwen3_0_6B => {
             let model = Qwen3GenerateModel::init(path, None, None)?;
             ModelInstance::Qwen3(model)
+        }
+        WhichModel::Qwen3_5_0_8B => {
+            let model = Qwen3_5GenerateModel::init(path, None, None)?;
+            ModelInstance::Qwen3_5(model)
+        }
+        WhichModel::Qwen3_5_2B => {
+            let model = Qwen3_5GenerateModel::init(path, None, None)?;
+            ModelInstance::Qwen3_5(model)
+        }
+        WhichModel::Qwen3_5_4B => {
+            let model = Qwen3_5GenerateModel::init(path, None, None)?;
+            ModelInstance::Qwen3_5(model)
+        }
+        WhichModel::Qwen3_5_9B => {
+            let model = Qwen3_5GenerateModel::init(path, None, None)?;
+            ModelInstance::Qwen3_5(model)
         }
         WhichModel::Qwen3ASR0_6B => {
             let model = Qwen3AsrGenerateModel::init(path, None, None)?;

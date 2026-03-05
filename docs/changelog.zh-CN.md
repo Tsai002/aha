@@ -5,6 +5,15 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/spec/v2.0.0.html)。
 
+## [0.2.1] - (2026-03-05)
+- 新增Qwen3.5 模型
+
+### 2026-03-01
+- 更新 interpolate.rs
+
+### 2026-02-24
+- 更新 candle 版本 0.9.2
+
 ## [0.2.0] - 2026-02-05
 
 ### 新增

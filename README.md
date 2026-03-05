@@ -25,6 +25,9 @@
 aha is a high-performance, cross-platform AI inference engine built with Rust and the Candle framework. It brings state-of-the-art AI models to your local machine—no API keys, no cloud dependencies, just pure, fast AI running directly on your hardware.
 
 ## Changelog
+### v0.2.1 (2026-03-05)
+- Added Qwen3.5 model
+
 ### 2026-03-01
 - update interpolate.rs
 

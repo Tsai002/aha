@@ -59,7 +59,7 @@ fn qwen3vl_thinking_generate() -> Result<()> {
 
 #[test]
 fn qwen3vl_generate() -> Result<()> {
-    // test with cuda: RUST_BACKTRACE=1 cargo test -F cuda,ffmpeg qwen3vl_generate -r -- --nocapture
+    // test with cuda: RUST_BACKTRACE=1 cargo test -F cuda --test test_qwen3vl qwen3vl_generate -r -- --nocapture
 
     let save_dir =
         aha::utils::get_default_save_dir().ok_or(anyhow::anyhow!("Failed to get save dir"))?;
@@ -73,15 +73,15 @@ fn qwen3vl_generate() -> Result<()> {
                 "role": "user",
                 "content": [
                     {
-                        "type": "video",
-                        "video_url": 
+                        "type": "image",
+                        "image_url": 
                         {
-                            "url": "./assets/video/video_test.mp4"
+                            "url": "file:///home/jhq/Downloads/gougou1.jpg"
                         }
-                    },              
+                    },             
                     {
                         "type": "text", 
-                        "text": "视频中发生了什么？"
+                        "text": "描述这张图片."
                     }
                 ]
             }

@@ -1,46 +1,50 @@
 use std::{pin::pin, time::Instant};
 
-use aha::models::{GenerateModel, glm_asr_nano::generate::GlmAsrNanoGenerateModel};
+use aha::models::{GenerateModel, qwen3_5::generate::Qwen3_5GenerateModel};
 use aha_openai_dive::v1::resources::chat::ChatCompletionParameters;
 use anyhow::Result;
 use rocket::futures::StreamExt;
 
 #[test]
-fn glm_asr_nano_generate() -> Result<()> {
-    // RUST_BACKTRACE=1 cargo test -F cuda --test test_glm_asr_nano glm_asr_nano_generate -r -- --nocapture
+fn qwen3_5_generate() -> Result<()> {
+    // test with cuda: RUST_BACKTRACE=1 cargo test -F cuda --test test_qwen3_5 qwen3_5_generate -r -- --nocapture
+
     let save_dir =
         aha::utils::get_default_save_dir().ok_or(anyhow::anyhow!("Failed to get save dir"))?;
-    let model_path = format!("{}/ZhipuAI/GLM-ASR-Nano-2512/", save_dir);
+    let model_path = format!("{}/Qwen/Qwen3.5-0.8B/", save_dir);
+
     let message = r#"
     {
-        "model": "glm-asr-nano",
+        "model": "qwen3.5",
         "messages": [
             {
                 "role": "user",
-                "content": [
+                "content": [ 
                     {
-                        "type": "audio",
-                        "audio_url": 
+                        "type": "image",
+                        "image_url": 
                         {
-                            "url": "https://package-release.coderbox.cn/aiway/test/other/%E5%93%AA%E5%90%92.wav"
+                            "url": "file:///home/jhq/Downloads/gougou1.jpg"
                         }
-                    },           
+                    },             
                     {
                         "type": "text", 
-                        "text": "Please transcribe this audio into text"
+                        "text": "描述这张图片."
                     }
                 ]
             }
-        ]
+        ],
+        "metadata": {"enable_thinking": "true"}
     }
     "#;
     let mes: ChatCompletionParameters = serde_json::from_str(message)?;
     let i_start = Instant::now();
-    let mut glm_asr_model = GlmAsrNanoGenerateModel::init(&model_path, None, None)?;
+    let mut qwen3vl = Qwen3_5GenerateModel::init(&model_path, None, None)?;
     let i_duration = i_start.elapsed();
     println!("Time elapsed in load model is: {:?}", i_duration);
+
     let i_start = Instant::now();
-    let res = glm_asr_model.generate(mes)?;
+    let res = qwen3vl.generate(mes)?;
     let i_duration = i_start.elapsed();
     println!("generate: \n {:?}", res);
     if res.usage.is_some() {
@@ -54,28 +58,30 @@ fn glm_asr_nano_generate() -> Result<()> {
 }
 
 #[tokio::test]
-async fn glm_asr_nano_stream() -> Result<()> {
-    // RUST_BACKTRACE=1 cargo test -F cuda glm_asr_nano_stream -r -- --nocapture
+async fn qwen3_5_stream() -> Result<()> {
+    // test with cuda: RUST_BACKTRACE=1 cargo test -F cuda --test test_qwen3_5 qwen3_5_stream -r -- --nocapture
+
     let save_dir =
         aha::utils::get_default_save_dir().ok_or(anyhow::anyhow!("Failed to get save dir"))?;
-    let model_path = format!("{}/ZhipuAI/GLM-ASR-Nano-2512/", save_dir);
+    let model_path = format!("{}/Qwen/Qwen3.5-0.8B/", save_dir);
+
     let message = r#"
     {
-        "model": "glm-asr-nano",
+        "model": "qwen3.5",
         "messages": [
             {
                 "role": "user",
                 "content": [
                     {
-                        "type": "audio",
-                        "audio_url": 
+                        "type": "image",
+                        "image_url": 
                         {
-                            "url": "https://package-release.coderbox.cn/aiway/test/other/%E5%93%AA%E5%90%92.wav"
+                            "url": "file:///home/jhq/Downloads/gougou1.jpg"
                         }
-                    },           
+                    },             
                     {
                         "type": "text", 
-                        "text": "Please transcribe this audio into text"
+                        "text": "描述这张图片."
                     }
                 ]
             }
@@ -84,11 +90,12 @@ async fn glm_asr_nano_stream() -> Result<()> {
     "#;
     let mes: ChatCompletionParameters = serde_json::from_str(message)?;
     let i_start = Instant::now();
-    let mut glm_asr_model = GlmAsrNanoGenerateModel::init(&model_path, None, None)?;
+    let mut qwen3_5 = Qwen3_5GenerateModel::init(&model_path, None, None)?;
     let i_duration = i_start.elapsed();
     println!("Time elapsed in load model is: {:?}", i_duration);
+
     let i_start = Instant::now();
-    let mut stream = pin!(glm_asr_model.generate_stream(mes)?);
+    let mut stream = pin!(qwen3_5.generate_stream(mes)?);
     while let Some(item) = stream.next().await {
         println!("generate: \n {:?}", item);
     }

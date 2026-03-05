@@ -5,7 +5,8 @@ use candle_nn::{Conv1d, LayerNorm, Linear, Module, VarBuilder, linear, ops::soft
 use crate::{
     models::{
         common::{
-            NaiveAttention, TwoLinearMLP, eager_attention_forward, get_conv1d, get_layer_norm,
+            NaiveAttention, TwoLinearMLP, conv1d_depthwise, eager_attention_forward, get_conv1d,
+            get_layer_norm,
         },
         fun_asr_nano::config::FunASRNanoConfig,
         qwen3::{config::Qwen3Config, model::Qwen3Model},
@@ -85,7 +86,8 @@ impl MultiHeadedAttentionSANM {
         };
         let xs = inputs.transpose(1, 2)?;
         let xs = xs.pad_with_zeros(D::Minus1, self.left_padding, self.right_padding)?;
-        let xs = self.fsmn_block.forward(&xs)?;
+        // let xs = self.fsmn_block.forward(&xs)?;
+        let xs = conv1d_depthwise(&xs, self.fsmn_block.weight(), self.fsmn_block.bias())?;
         let xs = xs.transpose(1, 2)?;
         let mut xs = xs.add(&inputs)?;
         if let Some(mask) = mask {

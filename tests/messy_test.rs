@@ -5,7 +5,7 @@
 // use std::io::{Read, Seek};
 // use std::{io::Cursor, time::Instant};
 
-use aha::utils::interpolate::interpolate_nearest_2d;
+// use aha::utils::tensor_utils::repeat_interleave;
 // use aha_openai_dive::v1::resources::chat::ChatCompletionParameters;
 use anyhow::Result;
 // use byteorder::{LittleEndian, ReadBytesExt};
@@ -15,12 +15,23 @@ use candle_core::Tensor;
 
 #[test]
 fn messy_test() -> Result<()> {
-    // RUST_BACKTRACE=1 cargo test -F cuda messy_test -r -- --nocapture
+    // RUST_BACKTRACE=1 cargo test -F cuda --test messy_test messy_test -r -- --nocapture
     let device = &candle_core::Device::Cpu;
-    let input = Tensor::arange(0.0f32, 25.0f32, device)?.reshape((1, 1, 5, 5))?;
-    println!("input: {}", input);
-    let x_nearest = interpolate_nearest_2d(&input, (10, 10))?;
-    println!("x_nearest: {}", x_nearest);
+    let t1 = Tensor::randn(0.0, 1.0, (16, 9, 64, 128), device)?;
+    let t2 = Tensor::randn(0.0, 1.0, (16, 9, 128, 64), device)?;
+    let out = t1.matmul(&t2)?;
+    println!("out shape: {:?}", out);
+
+    // let input = Tensor::arange(0.0f32, 25.0f32, device)?.reshape((5, 5))?;
+    // println!("input: {}", input);
+    // // let input = input.unsqueeze(D::Minus1)?;
+    // // let input = input.repeat((1, 1, 2))?;
+    // // let input = input.flatten(D::Minus2, D::Minus1)?;
+    // let output = repeat_interleave(&input, 2, 1)?;
+    // println!("output: {}", output);
+
+    // let x_nearest = interpolate_nearest_2d(&input, (10, 10))?;
+    // println!("x_nearest: {}", x_nearest);
     // let input = Tensor::arange(0.0f32, 25.0f32, device)?.reshape((1, 5, 5))?;
     // println!("input: {}", input);
     // let x_nearest = interpolate_nearest_1d(&input, 10)?;

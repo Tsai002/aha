@@ -1,4 +1,4 @@
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use candle_core::{D, IndexOp, Tensor};
 use candle_nn::{
     Activation, BatchNorm, BatchNormConfig, Conv1d, Conv1dConfig, Conv2d, Conv2dConfig,
@@ -6,7 +6,6 @@ use candle_nn::{
     ModuleT, RmsNorm, VarBuilder, batch_norm, conv1d, conv1d_no_bias, conv2d, conv2d_no_bias,
     embedding, layer_norm, linear_b, linear_no_bias, ops::sigmoid, rms_norm,
 };
-use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::{
     position_embed::rope::{RoPE, apply_rotary_pos_emb, apply_rotary_pos_emb_roformer},
@@ -971,49 +970,6 @@ impl LlamaForCausalLM {
     }
 }
 
-pub fn conv1d_group_parallel(xs: &Tensor, conv1d: &Conv1d) -> Result<Tensor> {
-    let groups = conv1d.config().groups;
-    let xs = if groups == 1 {
-        xs.conv1d_with_algo(
-            conv1d.weight(),
-            conv1d.config().padding,
-            conv1d.config().stride,
-            conv1d.config().dilation,
-            groups,
-            conv1d.config().cudnn_fwd_algo,
-        )?
-    } else {
-        let blocks = xs.chunk(groups, 1)?;
-        let kernel = conv1d.weight().chunk(groups, 0)?;
-        let blocks = blocks
-            // .iter()
-            .par_iter()
-            .zip(&kernel)
-            .map(|(block, kernel)| {
-                block
-                    .conv1d_with_algo(
-                        kernel,
-                        conv1d.config().padding,
-                        conv1d.config().stride,
-                        conv1d.config().dilation,
-                        1,
-                        conv1d.config().cudnn_fwd_algo,
-                    )
-                    .map_err(|e| anyhow!(format!("tensor conv1d_with_algo error:{}", e)))
-            })
-            .collect::<Result<Vec<Tensor>>>()?;
-        Tensor::cat(&blocks, 1)?
-    };
-    match conv1d.bias() {
-        None => Ok(xs),
-        Some(bias) => {
-            let b = bias.dims1()?;
-            let bias = bias.reshape((1, b, 1))?;
-            Ok(xs.broadcast_add(&bias)?)
-        }
-    }
-}
-
 pub struct GLU {
     dim: usize,
 }
@@ -1193,4 +1149,46 @@ pub fn mish(xs: &Tensor) -> Result<Tensor> {
     let tanh = xs.exp()?.affine(1.0, 1.0)?.log()?.tanh()?;
     let xs = xs.mul(&tanh)?;
     Ok(xs)
+}
+
+pub fn softplus(xs: &Tensor) -> Result<Tensor> {
+    // ln(1 + exp(x))
+    Ok((xs.exp()? + 1.0)?.log()?)
+}
+
+pub fn softplus_stable(xs: &Tensor) -> Result<Tensor> {
+    // max(x, 0) + ln(1 + exp(-abs(x)))
+    let zero = Tensor::zeros_like(xs)?;
+    let x_max_0 = xs.maximum(&zero)?;
+    Ok((xs.abs()?.neg()?.exp()? + 1.0)?.log()?.add(&x_max_0)?)
+}
+
+// refer to https://github.com/huggingface/candle/issues/3389
+pub fn conv1d_depthwise(input: &Tensor, weight: &Tensor, bias: Option<&Tensor>) -> Result<Tensor> {
+    // group = dim, stride= 1
+    // input: (bs, dim, len)
+    // weight: (dim, 1, k) -> (dim, k)
+    // input already padding
+    let len_in = input.dim(2)?;
+    let weight = weight.squeeze(1)?;
+    let kernel_size = weight.dim(1)?;
+    // len_out = (len_in - k + 2p) / s + 1, p = 0, s = 1
+    let len_out = len_in - kernel_size + 1;
+    let mut out = input
+        .narrow(2, 0, len_out)?
+        .broadcast_mul(&weight.narrow(1, 0, 1)?.unsqueeze(0)?)?;
+    for k in 1..kernel_size {
+        out = (out
+            + input
+                .narrow(2, k, len_out)?
+                .broadcast_mul(&weight.narrow(1, k, 1)?.unsqueeze(0)?)?)?;
+    }
+    match bias {
+        None => Ok(out),
+        Some(bias) => {
+            let b = bias.dims1()?;
+            let bias = bias.reshape((1, b, 1))?;
+            Ok(out.broadcast_add(&bias)?)
+        }
+    }
 }

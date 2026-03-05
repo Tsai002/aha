@@ -6,7 +6,7 @@ use anyhow::Result;
 use rocket::futures::StreamExt;
 #[test]
 fn fun_asr_nano_generate() -> Result<()> {
-    // RUST_BACKTRACE=1 cargo test -F cuda fun_asr_nano_generate -r -- --nocapture
+    // RUST_BACKTRACE=1 cargo test -F cuda --test test_fun_asr_nano fun_asr_nano_generate -r -- --nocapture
     let save_dir =
         aha::utils::get_default_save_dir().ok_or(anyhow::anyhow!("Failed to get save dir"))?;
     let model_path = format!("{}/FunAudioLLM/Fun-ASR-Nano-2512/", save_dir);

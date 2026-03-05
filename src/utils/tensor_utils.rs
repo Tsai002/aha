@@ -554,7 +554,7 @@ pub fn l2_normalize(t: &Tensor, dim: usize) -> Result<Tensor> {
     if dim >= rank {
         return Err(anyhow!(format!("input dim {} must < rank {}", dim, rank)));
     }
-    let l2_norm = t.sqr()?.sum_keepdim(dim)?.sqrt()?;
+    let l2_norm = t.sqr()?.sum_keepdim(dim)?.affine(1.0, 1e-6)?.sqrt()?;
     Ok(t.broadcast_div(&l2_norm)?)
 }
 
@@ -649,4 +649,30 @@ pub fn cosine_similarity(query_vector: &Tensor, matrix: &Tensor) -> Result<Tenso
         .matmul(&matrix_norm.transpose(D::Minus1, D::Minus2)?)?
         .squeeze(D::Minus1)?;
     Ok(similarity)
+}
+
+pub fn repeat_interleave(t: &Tensor, repeats: usize, dim: usize) -> Result<Tensor> {
+    if repeats == 1 {
+        return Ok(t.clone());
+    }
+    let rank = t.rank();
+    if dim >= rank {
+        return Err(anyhow!(
+            "Dimension {} is out of range for tensor with {} dimensions",
+            dim,
+            rank
+        ));
+    }
+
+    let dims = t.dims();
+    let mut indices = Vec::with_capacity(dims[dim] * repeats);
+    for i in 0..dims[dim] {
+        for _ in 0..repeats {
+            indices.push(i as u32);
+        }
+    }
+
+    let indices_tensor = Tensor::from_vec(indices, (dims[dim] * repeats,), t.device())?;
+    let t = t.index_select(&indices_tensor, dim)?;
+    Ok(t)
 }

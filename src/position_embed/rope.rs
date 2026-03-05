@@ -142,10 +142,11 @@ pub fn glm_asr_apply_rotary_pos_emb(
     let cos = cos.to_dtype(q.dtype())?;
     let sin = sin.to_dtype(q.dtype())?;
     let rotary_dim = cos.dim(D::Minus1)?;
+    let q_dim = q.dim(D::Minus1)?;
     let q_rot = q.narrow(D::Minus1, 0, rotary_dim)?;
-    let q_pass = q.narrow(D::Minus1, rotary_dim, rotary_dim)?;
+    let q_pass = q.narrow(D::Minus1, rotary_dim, q_dim - rotary_dim)?;
     let k_rot = k.narrow(D::Minus1, 0, rotary_dim)?;
-    let k_pass = k.narrow(D::Minus1, rotary_dim, rotary_dim)?;
+    let k_pass = k.narrow(D::Minus1, rotary_dim, q_dim - rotary_dim)?;
 
     let q_embed = q_rot
         .broadcast_mul(&cos)?

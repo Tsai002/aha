@@ -1,16 +1,17 @@
-//! Qwen3VL-2B exec implementation for CLI `run` subcommand
+//! Qwen3.5 exec implementation for CLI `run` subcommand
 
 use std::time::Instant;
 
-use anyhow::{Ok, Result};
+use anyhow::Result;
 
 use crate::exec::ExecModel;
-use crate::models::{GenerateModel, qwen3vl::generate::Qwen3VLGenerateModel};
+use crate::models::GenerateModel;
+use crate::models::qwen3_5::generate::Qwen3_5GenerateModel;
 use crate::utils::get_file_path;
 
-pub struct Qwen3vlExec;
+pub struct Qwen3_5Exec;
 
-impl ExecModel for Qwen3vlExec {
+impl ExecModel for Qwen3_5Exec {
     fn run(input: &[String], output: Option<&str>, weight_path: &str) -> Result<()> {
         let input_text = &input[0];
         let target_text = if input_text.starts_with("file://") {
@@ -21,7 +22,7 @@ impl ExecModel for Qwen3vlExec {
         };
 
         let i_start = Instant::now();
-        let mut model = Qwen3VLGenerateModel::init(weight_path, None, None)?;
+        let mut model = Qwen3_5GenerateModel::init(weight_path, None, None)?;
         let i_duration = i_start.elapsed();
         println!("Time elapsed in load model is: {:?}", i_duration);
         let url = &input[1];
@@ -36,7 +37,7 @@ impl ExecModel for Qwen3vlExec {
         let message = if input_url.ends_with("mp4") {
             format!(
                 r#"{{
-            "model": "qwen3vl",
+            "model": "qwen3.5",
             "messages": [
                 {{
                     "role": "user",
@@ -61,7 +62,7 @@ impl ExecModel for Qwen3vlExec {
         } else {
             format!(
                 r#"{{
-            "model": "qwen3vl",
+            "model": "qwen2.5",
             "messages": [
                 {{
                     "role": "user",

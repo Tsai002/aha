@@ -131,4 +131,25 @@ impl<'a> ChatTemplate<'a> {
             .map_err(|e| anyhow!(format!("render template error {}", e)))?;
         Ok(message_str)
     }
+
+    pub fn apply_chat_temp_think(
+        &self,
+        messages: &ChatCompletionParameters,
+        enable_thinking: Option<bool>,
+    ) -> Result<String> {
+        let context = context! {
+            messages => &messages.messages,
+            tools => &messages.tools.as_ref(),
+            add_generation_prompt => true,
+            enable_thinking => enable_thinking,
+        };
+        let template = self
+            .env
+            .get_template("chat")
+            .map_err(|e| anyhow!(format!("render template error {}", e)))?;
+        let message_str = template
+            .render(context)
+            .map_err(|e| anyhow!(format!("render template error {}", e)))?;
+        Ok(message_str)
+    }
 }

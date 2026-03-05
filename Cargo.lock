@@ -30,7 +30,7 @@ dependencies = [
 
 [[package]]
 name = "aha"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "aha_openai_dive",
  "anyhow",

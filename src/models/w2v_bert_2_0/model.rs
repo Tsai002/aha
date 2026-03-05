@@ -7,7 +7,10 @@ use candle_nn::{
 
 use crate::{
     models::{
-        common::{GLU, TwoLinearMLP, eager_attention_forward, get_conv1d, get_layer_norm},
+        common::{
+            GLU, TwoLinearMLP, conv1d_depthwise, eager_attention_forward, get_conv1d,
+            get_layer_norm,
+        },
         w2v_bert_2_0::config::W2VBert2_0Config,
     },
     position_embed::rope::{RoPE, apply_rotary_pos_emb},
@@ -309,7 +312,12 @@ impl Wav2Vec2BertConvolutionModule {
         // (batch, channel, dim)
         let xs = self.glu.forward(&xs)?;
         let xs = xs.pad_with_zeros(D::Minus1, self.conv_depthwise_kernel_size - 1, 0)?;
-        let xs = self.depthwise_conv.forward(&xs)?;
+        // let xs = self.depthwise_conv.forward(&xs)?;
+        let xs = conv1d_depthwise(
+            &xs,
+            self.depthwise_conv.weight(),
+            self.depthwise_conv.bias(),
+        )?;
         let xs = self
             .depthwise_layer_norm
             .forward(&xs.transpose(1, 2)?)?

@@ -6,11 +6,10 @@ use candle_nn::{
 
 use crate::{
     models::{
-        common::{WNConv1d, get_conv1d, get_layer_norm},
+        common::{WNConv1d, conv1d_depthwise, get_conv1d, get_layer_norm},
         mask_gct::config::SemanticCodec,
     },
-    utils::interpolate::interpolate_nearest_1d,
-    utils::tensor_utils::l2_normalize,
+    utils::{interpolate::interpolate_nearest_1d, tensor_utils::l2_normalize},
 };
 
 pub struct ConvNeXtBlock {
@@ -43,7 +42,9 @@ impl ConvNeXtBlock {
     }
     pub fn forward(&self, xs: &Tensor) -> Result<Tensor> {
         let residual = xs.clone();
-        let xs = self.dwconv.forward(xs)?;
+        // let xs = self.dwconv.forward(xs)?;
+        let xs = xs.pad_with_zeros(D::Minus1, 3, 3)?;
+        let xs = conv1d_depthwise(&xs, self.dwconv.weight(), self.dwconv.bias())?;
         let xs = xs.transpose(1, 2)?;
         let xs = self.norm.forward(&xs)?;
         let xs = self.pwconv1.forward(&xs)?.gelu()?;

@@ -2,34 +2,27 @@
 
 aha supports a growing collection of state-of-the-art AI models across multiple domains.
 
-## Text Generation
+## Language Model
 
 | Model | Parameters | Description | Use Case | License |
 |-------|-----------|-------------|----------|---------|
-| **Qwen2.5-VL-3B** | 3B | Multimodal LLM | Chat, reasoning, vision | [Qwen Research License](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
-| **Qwen2.5-VL-7B** | 7B | Multimodal LLM | Chat, reasoning, vision | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **Qwen3-0.6B** | 0.6B | Latest generation | Advanced reasoning | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **MiniCPM4-0.5B** | 0.5B | Efficient lightweight | Edge deployment | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 
 ## Vision & Multimodal
 
-| Model | Parameters | Description | Resolution | License |
-|-------|-----------|-------------|------------|---------|
-| **Qwen2.5-VL-3B** | 3B | Image understanding | Up to 1024x1024 | [Qwen Research License](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
-| **Qwen2.5-VL-7B** | 7B | Image understanding | Up to 1024x1024 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-2B** | 2B | Enhanced multimodal | Up to 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-4B** | 4B | Enhanced multimodal | Up to 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-8B** | 8B | Enhanced multimodal | Up to 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-VL-32B** | 32B | Enhanced multimodal | Up to 1536x1536 | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-
-## Speech Recognition (ASR)
-
-| Model | Parameters | Language | Real-time | Speed | License |
-|-------|-----------|----------|-----------|-------|---------|
-| **Fun-ASR-Nano-2512** | 2512M | Chinese/English | Yes | 16x realtime | Not Specified |
-| **GLM-ASR-Nano-2512** | 2512M | Chinese/English | Yes | 32x realtime | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
-| **Qwen3-ASR-0.6B** | 0.6B | Chinese/English | Yes | Fast | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
-| **Qwen3-ASR-1.7B** | 1.7B | Chinese/English | Yes | Fast | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| Model | Parameters | Description | License |
+|-------|-----------|-------------|---------|
+| **Qwen2.5-VL-3B** | 3B | Image understanding | [Qwen Research License](https://huggingface.co/Qwen/Qwen2.5-VL-3B-Instruct/blob/main/LICENSE) |
+| **Qwen2.5-VL-7B** | 7B | Image understanding | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-2B** | 2B | Enhanced multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-4B** | 4B | Enhanced multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-8B** | 8B | Enhanced multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-VL-32B** | 32B | Enhanced multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-0.8B** | 0.8B | Native Multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-2B** | 2B | Native Multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-4B** | 4B | Native Multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3.5-9B** | 9B | Native Multimodal | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 
 ## OCR
 
@@ -38,6 +31,16 @@ aha supports a growing collection of state-of-the-art AI models across multiple 
 | **PaddleOCR-VL** | 80+ | Lightweight | General documents | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
 | **Hunyuan-OCR** | Chinese | Deep learning | Complex layouts | [Tencent Hunyuan Community License](https://huggingface.co/tencent/HunyuanOCR/blob/main/LICENSE) |
 | **DeepSeek-OCR** | Multi | Scene text | Natural images | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
+
+## Speech Recognition (ASR)
+
+| Model | Parameters | Language | Real-time | Speed | License |
+|-------|-----------|----------|-----------|-------|---------|
+| **Fun-ASR-Nano-2512** | 2G | Chinese/English | Yes | Fast | Not Specified |
+| **GLM-ASR-Nano-2512** | 4.5G | Chinese/English | Yes | Fast | [MIT](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/mit.md) |
+| **Qwen3-ASR-0.6B** | 0.6B | Chinese/English | Yes | Fast | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+| **Qwen3-ASR-1.7B** | 1.7B | Chinese/English | Yes | Fast | [Apache 2.0](https://huggingface.co/datasets/choosealicense/licenses/blob/main/markdown/apache-2.0.md) |
+
 
 ## Audio Generation
 
@@ -77,7 +80,7 @@ Always verify license terms before deployment in production environments.
 
 ## Model Updates
 
-Models are regularly updated. Check the [releases](https://github.com/jhqxxx/aha/releases) for the latest versions.
+Models updated from time to time. 
 
 ## Performance Benchmarks
 
