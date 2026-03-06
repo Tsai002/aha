@@ -11,8 +11,8 @@ use crate::models::qwen3::config::{Qwen3Config, Qwen3GenerationConfig};
 use crate::models::qwen3::model::Qwen3Model;
 // use crate::models::GenerateStream;
 use crate::utils::{
-    build_completion_chunk_response, build_completion_response, find_type_files, get_device,
-    get_dtype, get_logit_processor,
+    build_completion_chunk_response, build_completion_response, extract_metadata_value,
+    find_type_files, get_device, get_dtype, get_logit_processor,
 };
 use crate::{chat_template::ChatTemplate, models::GenerateModel, tokenizer::TokenizerModel};
 
@@ -73,9 +73,14 @@ impl<'a> GenerateModel for Qwen3GenerateModel<'a> {
         };
         let mut logit_processor =
             get_logit_processor(Some(temperature), Some(top_p), Some(top_k), seed);
-        let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let enable_thinking = extract_metadata_value::<bool>(&mes.metadata, "enable_thinking");
+        // let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let mes_render = self
+            .chat_template
+            .apply_chat_temp_think(&mes, enable_thinking)?;
         let mut input_ids = self.tokenizer.text_encode(mes_render, &self.device)?;
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let mut generate = Vec::new();
         let sample_len = mes.max_tokens.unwrap_or(2048);
@@ -94,7 +99,8 @@ impl<'a> GenerateModel for Qwen3GenerateModel<'a> {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.qwen3.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
     fn generate_stream(
@@ -123,7 +129,11 @@ impl<'a> GenerateModel for Qwen3GenerateModel<'a> {
         };
         let mut logit_processor =
             get_logit_processor(Some(temperature), Some(top_p), Some(top_k), seed);
-        let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let enable_thinking = extract_metadata_value::<bool>(&mes.metadata, "enable_thinking");
+        // let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let mes_render = self
+            .chat_template
+            .apply_chat_temp_think(&mes, enable_thinking)?;
         let mut input_ids = self.tokenizer.text_encode(mes_render, &self.device)?;
         let mut seq_len = input_ids.dim(1)?;
         let mut seqlen_offset = 0;

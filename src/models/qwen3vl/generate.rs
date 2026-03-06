@@ -16,8 +16,8 @@ use crate::{
     },
     tokenizer::TokenizerModel,
     utils::{
-        build_completion_chunk_response, build_completion_response, find_type_files, get_device,
-        get_dtype, get_logit_processor,
+        build_completion_chunk_response, build_completion_response, extract_metadata_value,
+        find_type_files, get_device, get_dtype, get_logit_processor,
     },
 };
 
@@ -80,12 +80,17 @@ impl<'a> GenerateModel for Qwen3VLGenerateModel<'a> {
         };
         let mut logit_processor =
             get_logit_processor(Some(temperature), Some(top_p), Some(top_k), seed);
-        let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let enable_thinking = extract_metadata_value::<bool>(&mes.metadata, "enable_thinking");
+        // let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let mes_render = self
+            .chat_template
+            .apply_chat_temp_think(&mes, enable_thinking)?;
         let input = self.pre_processor.process_info(&mes, &mes_render)?;
         let mut input_ids = self
             .tokenizer
             .text_encode(input.replace_text.clone(), &self.device)?;
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let mut pixel_values = input.pixel_values.as_ref();
         let image_grid_thw = input.image_grid_thw.as_ref();
@@ -120,7 +125,8 @@ impl<'a> GenerateModel for Qwen3VLGenerateModel<'a> {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.qwen3_vl.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 
@@ -150,7 +156,11 @@ impl<'a> GenerateModel for Qwen3VLGenerateModel<'a> {
         };
         let mut logit_processor =
             get_logit_processor(Some(temperature), Some(top_p), Some(top_k), seed);
-        let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let enable_thinking = extract_metadata_value::<bool>(&mes.metadata, "enable_thinking");
+        // let mes_render = self.chat_template.apply_chat_template(&mes)?;
+        let mes_render = self
+            .chat_template
+            .apply_chat_temp_think(&mes, enable_thinking)?;
         let input = self.pre_processor.process_info(&mes, &mes_render)?;
         let mut input_ids = self
             .tokenizer

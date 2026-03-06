@@ -75,6 +75,7 @@ impl<'a> GenerateModel for Qwen2_5VLGenerateModel<'a> {
             .tokenizer
             .text_encode(input.replace_text.clone(), &self.device)?;
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let mut pixel_values = input.pixel_values.as_ref();
         let image_grid_thw = input.image_grid_thw.as_ref();
@@ -121,7 +122,8 @@ impl<'a> GenerateModel for Qwen2_5VLGenerateModel<'a> {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.qwen2_5_vl.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 

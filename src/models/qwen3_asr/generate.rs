@@ -90,10 +90,12 @@ impl<'a> GenerateModel for Qwen3AsrGenerateModel<'a> {
             .process_info(&mes, &render_text, &self.tokenizer)?;
         let sample_len = mes.max_tokens.unwrap_or(1024);
         let mut generate = Vec::new();
+        let mut prompt_tokens = 0u32;
         for data in audio_datas.iter() {
             let mut input_ids = data.input_ids.clone();
             let mut input_features = Some(data.input_features.clone().to_dtype(self.dtype)?);
             let mut seq_len = input_ids.dim(1)?;
+            prompt_tokens += seq_len as u32;
             let mut seqlen_offset = 0;
             for _ in 0..sample_len {
                 let logits =
@@ -114,7 +116,8 @@ impl<'a> GenerateModel for Qwen3AsrGenerateModel<'a> {
         }
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 

@@ -93,6 +93,7 @@ impl<'a> GenerateModel for HunyuanOCRGenerateModel<'a> {
         let mut pixel_values = data.pixel_values;
         let mut image_grid_thw = data.image_grid_thw;
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let mut generate: Vec<u32> = Vec::new();
         let sample_len = mes.max_tokens.unwrap_or(1024);
@@ -122,7 +123,8 @@ impl<'a> GenerateModel for HunyuanOCRGenerateModel<'a> {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.hunyuan_vl.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 

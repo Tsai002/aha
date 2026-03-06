@@ -114,6 +114,7 @@ impl GenerateModel for FunAsrNanoGenerateModel {
         let mut speech = Some(speech.to_dtype(self.dtype)?);
         let mut fbank_mask = Some(&fbank_mask);
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let mut generate = Vec::new();
         let sample_len = mes.max_tokens.unwrap_or(1024);
@@ -139,7 +140,8 @@ impl GenerateModel for FunAsrNanoGenerateModel {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.fun_asr_nano.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 

@@ -479,16 +479,22 @@ pub fn build_audio_completion_response(
 pub fn build_completion_response(
     res: String,
     model_name: &str,
-    num_tokens: Option<u32>,
+    completion_tokens: Option<u32>,
+    prompt_tokens: Option<u32>,
 ) -> ChatCompletionResponse {
     let id = uuid::Uuid::new_v4().to_string();
-    let usage = num_tokens.map(|num| Usage {
-        prompt_tokens: None,
-        completion_tokens: None,
-        total_tokens: num,
-        prompt_tokens_details: None,
-        completion_tokens_details: None,
-    });
+    let usage = if prompt_tokens.is_none() && completion_tokens.is_none() {
+        None
+    } else {
+        Some(Usage {
+            prompt_tokens,
+            completion_tokens,
+            total_tokens: prompt_tokens.unwrap_or(0) + completion_tokens.unwrap_or(0),
+            prompt_tokens_details: None,
+            completion_tokens_details: None,
+        })
+    };
+
     let mut response = ChatCompletionResponse {
         id: Some(id),
         choices: vec![],

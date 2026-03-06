@@ -71,6 +71,7 @@ impl<'a> GenerateModel for PaddleOCRVLGenerateModel<'a> {
             self.pre_processor.process_info(&mes, &mes_render)?;
         let mut input_ids = self.tokenizer.text_encode(replace_text, &self.device)?;
         let mut seq_len = input_ids.dim(1)?;
+        let prompt_tokens = seq_len as u32;
         let mut seqlen_offset = 0;
         let image_mask = get_equal_mask(&input_ids, self.cfg.image_token_id)?;
 
@@ -107,7 +108,8 @@ impl<'a> GenerateModel for PaddleOCRVLGenerateModel<'a> {
         let num_token = generate.len() as u32;
         let res = self.tokenizer.token_decode(generate)?;
         self.paddleocr_vl.clear_kv_cache();
-        let response = build_completion_response(res, &self.model_name, Some(num_token));
+        let response =
+            build_completion_response(res, &self.model_name, Some(num_token), Some(prompt_tokens));
         Ok(response)
     }
 
